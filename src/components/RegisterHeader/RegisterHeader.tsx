@@ -9,7 +9,6 @@ export default function RegisterHeader() {
           <Link to='/'>
             <img className='h-8 lg:h-11' src='/src/assets/shopee-logo.svg' alt='Shopee Logo' />
           </Link>
-          <div className='ml-5 text-xl lg:text-2xl'>Đăng ký</div>
         </nav>
       </div>
     </header>
