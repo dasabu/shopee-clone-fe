@@ -4,7 +4,7 @@ import { RegisterValidationSchema } from '../../utils/validation'
 interface AuthInputProps {
   type: React.HTMLInputTypeAttribute
   placeholder: string
-  name: keyof RegisterValidationSchema
+  name: keyof RegisterValidationSchema // 'name' || 'password' || 'confirm_password'
   errorMessage?: string
 
   register: UseFormRegister<RegisterValidationSchema>
