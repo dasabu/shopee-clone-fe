@@ -13,24 +13,24 @@ module.exports = {
     // Disable các rule mà eslint xung đột với prettier.
     // Để cái này ở dưới để nó override các rule phía trên!.
     'eslint-config-prettier',
-    'prettier',
+    'prettier'
   ],
   plugins: ['prettier'],
   settings: {
     react: {
       // Nói eslint-plugin-react tự động biết version của React.
-      version: 'detect',
+      version: 'detect'
     },
     // Nói ESLint cách xử lý các import
     'import/resolver': {
       node: {
         paths: [path.resolve(__dirname, '')],
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
-      },
-    },
+        extensions: ['.js', '.jsx', '.ts', '.tsx']
+      }
+    }
   },
   env: {
-    node: true,
+    node: true
   },
   rules: {
     // Tắt rule yêu cầu import React trong file jsx
@@ -49,8 +49,8 @@ module.exports = {
         useTabs: false,
         singleQuote: true,
         printWidth: 120,
-        jsxSingleQuote: true,
-      },
-    ],
-  },
+        jsxSingleQuote: true
+      }
+    ]
+  }
 }
