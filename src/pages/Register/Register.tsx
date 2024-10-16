@@ -4,21 +4,50 @@ import { yupResolver } from '@hookform/resolvers/yup'
 
 import { registerValidationSchema, RegisterValidationSchema } from '../../utils/validation'
 import AuthInput from '../../components/AuthInput'
+import { useMutation } from '@tanstack/react-query'
+import { AuthCredentials } from '../../types/auth.type'
+import { registerAccountApi } from '../../apis/auth.api'
+import { omit } from 'lodash'
+import { isAxios422Error } from '../../utils/error'
+import { ApiResponse } from '../../types/utils.type'
 
 export default function Register() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors }
   } = useForm<RegisterValidationSchema>({
     resolver: yupResolver(registerValidationSchema)
   })
 
-  const handleRegisterSubmit = handleSubmit((data) => {
-    console.log(data)
+  const registerAccountMutation = useMutation({
+    mutationFn: (body: AuthCredentials) => registerAccountApi(body)
   })
 
-  console.log(errors)
+  const handleRegisterSubmit = handleSubmit((data) => {
+    const body = omit(data, ['confirm_password'])
+    registerAccountMutation.mutate(body, {
+      onSuccess: (data) => {
+        console.log('data: ', data)
+      },
+      onError: (error) => {
+        if (isAxios422Error<ApiResponse<AuthCredentials>>(error)) {
+          const formError = error.response?.data.data
+          if (formError?.email) {
+            setError('email', {
+              message: formError.email
+            })
+          }
+          if (formError?.password) {
+            setError('password', {
+              message: formError.password
+            })
+          }
+        }
+      }
+    })
+  })
 
   return (
     <div className='bg-shopee_orange'>
