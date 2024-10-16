@@ -24,21 +24,21 @@ export const authRules: CustomAuthRule = {
   password: {
     required: {
       value: true,
-      message: 'Password không được rỗng'
+      message: 'Mật khẩu không được rỗng'
     },
     minLength: {
       value: 6,
-      message: 'Password có độ dài từ 6 - 160 ký tự'
+      message: 'Mật khẩu có độ dài từ 6 - 160 ký tự'
     },
     maxLength: {
       value: 160,
-      message: 'Password có độ dài từ 6 - 160 ký tự'
+      message: 'Mật khẩu có độ dài từ 6 - 160 ký tự'
     }
   },
   confirm_password: {
     required: {
       value: true,
-      message: 'Confirm Password không được rỗng'
+      message: 'Bạn phải nhập lại mật khẩu'
     }
   }
 }

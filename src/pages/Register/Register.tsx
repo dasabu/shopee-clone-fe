@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { authRules } from '../../utils/authRules'
+import AuthInput from '../../components/AuthInput'
 
 export default function Login() {
   const {
@@ -22,42 +23,37 @@ export default function Login() {
         <div className='grid grid-cols-1 lg:grid-cols-5 py-12 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
             <form className='p-10 rounded bg-white shadow-sm' noValidate onSubmit={handleRegisterSubmit}>
-              <div className='text-2xl'>Đăng ký</div>
-              <div className='mt-8'>
-                <input
-                  type='email'
-                  className='p-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
-                  placeholder='Email'
-                  {...register('email', authRules.email)}
-                />
-                <div className='mt-1 text-red-600 min-h-[1.25rem] text-sm'>{errors?.email?.message as string}</div>
-              </div>
-              <div className='mt-3'>
-                <input
-                  type='password'
-                  autoComplete='on'
-                  className='p-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
-                  placeholder='Password'
-                  {...register('password', authRules.password)}
-                />
-                <div className='mt-1 text-red-600 min-h-[1.25rem] text-sm'>{errors?.password?.message as string}</div>
-              </div>
-              <div className='mt-3'>
-                <input
-                  type='password'
-                  autoComplete='on'
-                  className='p-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
-                  placeholder='Confirm Password'
-                  {...register('confirm_password', {
-                    ...authRules.confirm_password,
-                    validate: (value) => value === getValues('password') || 'Password không khớp'
-                  })}
-                />
-                <div className='mt-1 text-red-600 min-h-[1.25rem] text-sm'>
-                  {errors?.confirm_password?.message as string}
-                </div>
-              </div>
-              <div className='mt-8'>
+              <div className='mb-8 text-2xl'>Đăng ký</div>
+              <AuthInput
+                type='email'
+                placeholder='Email'
+                name='email'
+                register={register}
+                authRule={authRules.email}
+                errorMessage={errors?.email?.message as string}
+              />
+              <AuthInput
+                type='password'
+                placeholder='Mật khẩu'
+                name='password'
+                register={register}
+                authRule={authRules.password}
+                errorMessage={errors?.password?.message as string}
+                autoComplete='on'
+              />
+              <AuthInput
+                type='password'
+                placeholder='Nhập lại mật khẩu'
+                name='confirm_password'
+                register={register}
+                authRule={{
+                  ...authRules.confirm_password,
+                  validate: (value) => value === getValues('password') || 'Mật khẩu không khớp'
+                }}
+                errorMessage={errors?.confirm_password?.message as string}
+                autoComplete='on'
+              />
+              <div className='mt-5'>
                 <button className='w-full text-center py-4 px-2 uppercase bg-red-500 text-white text-sm hover:bg-red-600'>
                   Đăng ký
                 </button>
