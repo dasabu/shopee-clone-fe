@@ -1,15 +1,18 @@
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
-import { authRules } from '../../utils/authRules'
+import { yupResolver } from '@hookform/resolvers/yup'
+
+import { registerValidationSchema, RegisterValidationSchema } from '../../utils/validation'
 import AuthInput from '../../components/AuthInput'
 
-export default function Login() {
+export default function Register() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-    getValues
-  } = useForm()
+    formState: { errors }
+  } = useForm<RegisterValidationSchema>({
+    resolver: yupResolver(registerValidationSchema)
+  })
 
   const handleRegisterSubmit = handleSubmit((data) => {
     console.log(data)
@@ -29,7 +32,6 @@ export default function Login() {
                 placeholder='Email'
                 name='email'
                 register={register}
-                authRule={authRules.email}
                 errorMessage={errors?.email?.message as string}
               />
               <AuthInput
@@ -37,7 +39,6 @@ export default function Login() {
                 placeholder='Mật khẩu'
                 name='password'
                 register={register}
-                authRule={authRules.password}
                 errorMessage={errors?.password?.message as string}
                 autoComplete='on'
               />
@@ -46,10 +47,6 @@ export default function Login() {
                 placeholder='Nhập lại mật khẩu'
                 name='confirm_password'
                 register={register}
-                authRule={{
-                  ...authRules.confirm_password,
-                  validate: (value) => value === getValues('password') || 'Mật khẩu không khớp'
-                }}
                 errorMessage={errors?.confirm_password?.message as string}
                 autoComplete='on'
               />
