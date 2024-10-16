@@ -1,5 +1,14 @@
 import React from 'react'
 
-export default function RegisterLayout() {
-  return <div>RegisterLayout</div>
+interface RegisterLayoutProps {
+  children?: React.ReactNode
+}
+
+export default function RegisterLayout({ children }: RegisterLayoutProps) {
+  return (
+    <div>
+      RegisterLayout
+      {children}
+    </div>
+  )
 }
