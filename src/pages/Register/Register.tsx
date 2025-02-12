@@ -1,17 +1,17 @@
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
+import { useMutation } from '@tanstack/react-query'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-
-import { registerValidationSchema } from '../../utils/validation'
-import AuthInput from '../../components/AuthInput'
-import { useMutation } from '@tanstack/react-query'
-import { AuthCredentials } from '../../types/auth.type'
-import { registerApi } from '../../apis/auth.api'
 import { omit } from 'lodash'
-import { isAxios422Error } from '../../utils/error'
-import { ApiResponse } from '../../types/utils.type'
 import { toast } from 'react-toastify'
+
+import AuthInput from '@/components/AuthInput'
+import { registerValidationSchema } from '@/utils/validation'
+import { isAxios422Error } from '@/utils/error'
+import { AuthCredentials } from '@/types/auth.type'
+import { ApiResponse } from '@/types/utils.type'
+import { registerApi } from '@/apis/auth.api'
 
 type RegisterValidationSchema = yup.InferType<typeof registerValidationSchema>
 
