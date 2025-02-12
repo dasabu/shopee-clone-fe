@@ -1,7 +1,8 @@
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import AuthInput from '../../components/AuthInput'
-import { loginValidationSchema, LoginValidationSchema } from '../../utils/validation'
+import { loginValidationSchema } from '../../utils/validation'
+import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
 import { loginApi } from '../../apis/auth.api'
@@ -9,6 +10,8 @@ import { AuthCredentials } from '../../types/auth.type'
 import { toast } from 'react-toastify'
 import { ApiResponse } from '../../types/utils.type'
 import { isAxios422Error } from '../../utils/error'
+
+type LoginValidationSchema = yup.InferType<typeof loginValidationSchema>
 
 export default function Login() {
   const navigate = useNavigate()

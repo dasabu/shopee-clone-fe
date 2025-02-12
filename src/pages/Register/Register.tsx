@@ -1,8 +1,9 @@
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
+import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 
-import { registerValidationSchema, RegisterValidationSchema } from '../../utils/validation'
+import { registerValidationSchema } from '../../utils/validation'
 import AuthInput from '../../components/AuthInput'
 import { useMutation } from '@tanstack/react-query'
 import { AuthCredentials } from '../../types/auth.type'
@@ -11,6 +12,8 @@ import { omit } from 'lodash'
 import { isAxios422Error } from '../../utils/error'
 import { ApiResponse } from '../../types/utils.type'
 import { toast } from 'react-toastify'
+
+type RegisterValidationSchema = yup.InferType<typeof registerValidationSchema>
 
 export default function Register() {
   const navigate = useNavigate()
@@ -36,7 +39,9 @@ export default function Register() {
         navigate('/')
       },
       onError: (error) => {
+        // Hiển thị lỗi cho từng input
         if (isAxios422Error<ApiResponse<AuthCredentials>>(error)) {
+          // Trong trường hợp lỗi 422 thì error là object như sau:
           // error: AxiosError<ApiResponse<AuthCredentials>>:
           //        message:  string
           //        code:     string
@@ -59,10 +64,7 @@ export default function Register() {
           //                         .password?: // If an error exists in the password input
 
           const authInputError = error.response?.data.data
-          // When the object does not have many fields
-          // In this case, the object only has 2 fields: email and password
-          // We can use this approach:
-
+          // Trong trường hợp object không có nhiều field (chỉ có email và password) thì có thể làm như sau:
           // if (authInputError?.email) {
           //   setError('email', {
           //     message: authInputError.email
@@ -74,8 +76,7 @@ export default function Register() {
           //   })
           // }
 
-          // But in case there are so many keys in the object
-          // Loop through each key and check:
+          // Nhưng đối với object có rất nhiều field: lặp qua từng field và check
           if (authInputError) {
             Object.keys(authInputError).forEach((key) => {
               setError(key as keyof AuthCredentials, {

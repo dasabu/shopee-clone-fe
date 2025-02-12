@@ -18,8 +18,5 @@ export const registerValidationSchema = yup.object({
     .oneOf([yup.ref('password')], 'Mật khẩu nhập lại không khớp')
 })
 
-export type RegisterValidationSchema = yup.InferType<typeof registerValidationSchema>
-
+// Login
 export const loginValidationSchema = registerValidationSchema.omit(['confirm_password'])
-
-export type LoginValidationSchema = yup.InferType<typeof loginValidationSchema>

@@ -9,6 +9,7 @@ module.exports = {
   },
   theme: {
     extend: {
+      // add custom orange color
       colors: {
         shopee_orange: '#ee4d2d'
       }

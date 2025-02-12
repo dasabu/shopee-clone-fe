@@ -1,7 +1,6 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
 
-export default function RegisterHeader() {
+export default function AuthHeader() {
   return (
     <header className='py-5'>
       <div className='max-w-7xl mx-auto px-4'>

@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios'
 
-// if these 'isAxios...error' functions return true -> type of error will be AxiosError
-// else -> type of error will be never
+// if these 'isAxios...error' functions return true -> typeof error = AxiosError
+// else -> typeof error = never
 export function isAxiosError<T>(error: unknown): error is AxiosError<T> {
   return axios.isAxiosError(error)
 }

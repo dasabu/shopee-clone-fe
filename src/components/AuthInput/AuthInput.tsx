@@ -2,12 +2,14 @@ import React from 'react'
 import { FieldValues, Path, UseFormRegister } from 'react-hook-form'
 
 interface AuthInputProps<T extends FieldValues> {
-  type: React.HTMLInputTypeAttribute
+  type: React.HTMLInputTypeAttribute // chặt chẽ hơn string: chỉ nhận các giá trị 'email', 'password',... của thẻ <input/>
   placeholder: string
-  name: Path<T>
+  name: Path<T> // chỉ nhận vào key của T
+  // T = RegisterSchema:  name = 'email' || 'password' || 'confirm_password'
+  // T = LoginSchema:     name = 'email' || 'password'
   errorMessage?: string
 
-  register: UseFormRegister<T>
+  register: UseFormRegister<T> // register function interface
 
   autoComplete?: string
 }
