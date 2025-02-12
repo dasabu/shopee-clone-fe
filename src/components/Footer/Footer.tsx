@@ -3,8 +3,8 @@ export default function Footer() {
     <footer className='bg-neutral-100 py-16 text-slate-500 '>
       <div className='container'>
         <div className='grid grid-cols-1 gap-4 lg:grid-cols-3'>
-          <div className='lg:col-span-1'>
-            <div>© 2022 Shopee. Tất cả các quyền được bảo lưu.</div>
+          <div className='lg:col-span-1 text-center'>
+            <div>© 2025 Shopee. Tất cả các quyền được bảo lưu.</div>
           </div>
           <div className='lg:col-span-2'>
             <div>

@@ -1,30 +1,71 @@
-import { useRoutes } from 'react-router-dom'
-import ProductList from '../pages/ProductList'
-import Login from '../pages/Login'
-import Register from '../pages/Register'
-import RegisterLayout from '../layouts/AuthLayout'
+import { Navigate, Outlet, useRoutes } from 'react-router-dom'
+import AuthLayout from '@/layouts/AuthLayout'
+import MainLayout from '@/layouts/MainLayout'
+import Login from '@/pages/Login'
+import ProductList from '@/pages/ProductList'
+import Register from '@/pages/Register'
+import Profile from '@/pages/Profile'
+import { AppContext } from '@/contexts/app.context'
+import { useContext } from 'react'
+
+/* đã login/register */
+function ProtectedRoute() {
+  const { isAuthenticated } = useContext(AppContext)
+  return isAuthenticated ? <Outlet /> : <Navigate to='/login' />
+}
+
+/* chưa login/register */
+function RejectedRoute() {
+  const { isAuthenticated } = useContext(AppContext)
+  return !isAuthenticated ? <Outlet /> : <Navigate to='/' />
+}
 
 export default function useRoutesElements() {
   const routesElements = useRoutes([
     {
       path: '/',
-      element: <ProductList />
-    },
-    {
-      path: '/login',
+      index: true,
       element: (
-        <RegisterLayout>
-          <Login />
-        </RegisterLayout>
+        <MainLayout>
+          <ProductList />
+        </MainLayout>
       )
     },
     {
-      path: '/register',
-      element: (
-        <RegisterLayout>
-          <Register />
-        </RegisterLayout>
-      )
+      path: '/',
+      element: <ProtectedRoute />,
+      children: [
+        {
+          path: '/profile',
+          element: (
+            <MainLayout>
+              <Profile />
+            </MainLayout>
+          )
+        }
+      ]
+    },
+    {
+      path: '/',
+      element: <RejectedRoute />,
+      children: [
+        {
+          path: '/login',
+          element: (
+            <AuthLayout>
+              <Login />
+            </AuthLayout>
+          )
+        },
+        {
+          path: '/register',
+          element: (
+            <AuthLayout>
+              <Register />
+            </AuthLayout>
+          )
+        }
+      ]
     }
   ])
   return routesElements
