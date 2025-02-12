@@ -8,13 +8,13 @@ import Profile from '@/pages/Profile'
 import { AppContext } from '@/contexts/app.context'
 import { useContext } from 'react'
 
-// đã login/register
+/* đã login/register */
 function ProtectedRoute() {
   const { isAuthenticated } = useContext(AppContext)
   return isAuthenticated ? <Outlet /> : <Navigate to='/login' />
 }
 
-// chưa login/register
+/* chưa login/register */
 function RejectedRoute() {
   const { isAuthenticated } = useContext(AppContext)
   return !isAuthenticated ? <Outlet /> : <Navigate to='/' />
