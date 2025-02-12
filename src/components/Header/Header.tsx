@@ -1,7 +1,24 @@
 import { Link } from 'react-router-dom'
 import Popover from '../Popover'
+import { useMutation } from '@tanstack/react-query'
+import { logoutApi } from '@/apis/auth.api'
+import { useContext } from 'react'
+import { AppContext } from '@/contexts/app.context'
+import { toast } from 'react-toastify'
 
 export default function Header() {
+  const { isAuthenticated, setIsAuthenticated } = useContext(AppContext)
+  const logoutMutation = useMutation({
+    mutationFn: logoutApi,
+    onSuccess: (data) => {
+      setIsAuthenticated(false)
+      toast.success(data.data.message)
+    }
+  })
+
+  const handleLogout = () => {
+    logoutMutation.mutate()
+  }
   return (
     <div className='pb-5 pt-2 bg-[linear-gradient(-180deg,#f53d2d,#f63)] text-white'>
       <div className='container'>
@@ -14,8 +31,12 @@ export default function Header() {
             popoverOptions={
               <div className='bg-white relative shadow-md-rounded-sm border border-gray-200'>
                 <div className='flex flex-col py-2 px-3'>
-                  <button className='py-2 px-3 hover:text-shopee_orange'>Tiếng Việt</button>
-                  <button className='py-2 px-3 hover:text-shopee_orange'>English</button>
+                  <button className='py-2 px-3 hover:text-shopee_orange'>
+                    Tiếng Việt
+                  </button>
+                  <button className='py-2 px-3 hover:text-shopee_orange'>
+                    English
+                  </button>
                 </div>
               </div>
             }
@@ -39,40 +60,58 @@ export default function Header() {
             <span className='mx-1'>Tiếng Việt</span>
           </Popover>
           {/* User Popover*/}
-          <Popover
-            className='flex items-center py-1 hover:text-gray-300 cursor-pointer ml-6'
-            as='div'
-            popoverOptions={
-              <div className='bg-white relative shadow-md rounded-sm border border-gray-200'>
-                <Link
-                  to='/profile'
-                  className='block py-3 px-4 hover:bg-slate-100 bg-white hover:text-cyan-500 w-full text-left'
-                >
-                  Tài khoản của tôi
-                </Link>
-                <Link
-                  to='/'
-                  className='block py-3 px-4 hover:bg-slate-100 bg-white hover:text-cyan-500 w-full text-left'
-                >
-                  Đơn mua
-                </Link>
-                <button className='block py-3 px-4 hover:bg-slate-100 bg-white hover:text-cyan-500 w-full text-left'>
-                  Đăng xuất
-                </button>
+          {isAuthenticated ? (
+            <Popover
+              className='flex items-center py-1 hover:text-gray-300 cursor-pointer ml-6'
+              as='div'
+              popoverOptions={
+                <div className='bg-white relative shadow-md rounded-sm border border-gray-200'>
+                  <Link
+                    to='/profile'
+                    className='block py-3 px-4 hover:bg-slate-100 bg-white hover:text-cyan-500 w-full text-left'
+                  >
+                    Tài khoản của tôi
+                  </Link>
+                  <Link
+                    to='/'
+                    className='block py-3 px-4 hover:bg-slate-100 bg-white hover:text-cyan-500 w-full text-left'
+                  >
+                    Đơn mua
+                  </Link>
+                  <button
+                    className='block py-3 px-4 hover:bg-slate-100 bg-white hover:text-cyan-500 w-full text-left'
+                    onClick={handleLogout}
+                  >
+                    Đăng xuất
+                  </button>
+                </div>
+              }
+            >
+              {/* Avatar */}
+              <div className='w-6 h-6 mr-2 flex-shrink-0'>
+                <img
+                  src='https://cf.shopee.vn/file/d04ea22afab6e6d250a370d7ccc2e675_tn'
+                  alt='avatar'
+                  className='w-full h-full object-cover rounded-full'
+                />
               </div>
-            }
-          >
-            {/* Avatar */}
-            <div className='w-6 h-6 mr-2 flex-shrink-0'>
-              <img
-                src='https://cf.shopee.vn/file/d04ea22afab6e6d250a370d7ccc2e675_tn'
-                alt='avatar'
-                className='w-full h-full object-cover rounded-full'
-              />
+              {/* Name */}
+              <div>duyanhle</div>
+            </Popover>
+          ) : (
+            <div className='flex items-center'>
+              <Link
+                to='/register'
+                className='mx-3 capitalize hover:text-white/70'
+              >
+                Đăng ký
+              </Link>
+              <div className='border-r-[2px] border-r-white/40 h-4' />
+              <Link to='/login' className='mx-3 capitalize hover:text-white/70'>
+                Đăng nhập
+              </Link>
             </div>
-            {/* Name */}
-            <div>duyanhle</div>
-          </Popover>
+          )}
         </div>
         {/* Shopee logo + Search form + Cart icon */}
         <div className='grid grid-cols-12 gap-4 mt-4 items-end'>
@@ -118,7 +157,9 @@ export default function Header() {
               popoverOptions={
                 <div className='bg-white relative shadow-md rounded-sm border border-gray-200 max-w-[400px] text-sm'>
                   <div className='p-2'>
-                    <div className='text-gray-400 capitalize'>Sản phẩm mới thêm</div>
+                    <div className='text-gray-400 capitalize'>
+                      Sản phẩm mới thêm
+                    </div>
                     <div className='mt-5'>
                       <div className='mt-4 flex'>
                         <div className='flex-shrink-0'>
@@ -130,7 +171,8 @@ export default function Header() {
                         </div>
                         <div className='flex-grow ml-2 overflow-hidden'>
                           <div className='truncate'>
-                            [LIFEMCMBP2 -12% đơn 250K] Bộ Nồi Inox 3 Đáy SUNHOUSE SH334 16, 20, 24 cm
+                            [LIFEMCMBP2 -12% đơn 250K] Bộ Nồi Inox 3 Đáy
+                            SUNHOUSE SH334 16, 20, 24 cm
                           </div>
                         </div>
                         <div className='ml-2 flex-shrink-0'>
@@ -147,7 +189,8 @@ export default function Header() {
                         </div>
                         <div className='flex-grow ml-2 overflow-hidden'>
                           <div className='truncate'>
-                            [LIFEMCMBP2 -12% đơn 250K] Bộ Nồi Inox 3 Đáy SUNHOUSE SH334 16, 20, 24 cm
+                            [LIFEMCMBP2 -12% đơn 250K] Bộ Nồi Inox 3 Đáy
+                            SUNHOUSE SH334 16, 20, 24 cm
                           </div>
                         </div>
                         <div className='ml-2 flex-shrink-0'>
@@ -164,7 +207,8 @@ export default function Header() {
                         </div>
                         <div className='flex-grow ml-2 overflow-hidden'>
                           <div className='truncate'>
-                            [LIFEMCMBP2 -12% đơn 250K] Bộ Nồi Inox 3 Đáy SUNHOUSE SH334 16, 20, 24 cm
+                            [LIFEMCMBP2 -12% đơn 250K] Bộ Nồi Inox 3 Đáy
+                            SUNHOUSE SH334 16, 20, 24 cm
                           </div>
                         </div>
                         <div className='ml-2 flex-shrink-0'>
@@ -181,7 +225,8 @@ export default function Header() {
                         </div>
                         <div className='flex-grow ml-2 overflow-hidden'>
                           <div className='truncate'>
-                            [LIFEMCMBP2 -12% đơn 250K] Bộ Nồi Inox 3 Đáy SUNHOUSE SH334 16, 20, 24 cm
+                            [LIFEMCMBP2 -12% đơn 250K] Bộ Nồi Inox 3 Đáy
+                            SUNHOUSE SH334 16, 20, 24 cm
                           </div>
                         </div>
                         <div className='ml-2 flex-shrink-0'>
@@ -198,7 +243,8 @@ export default function Header() {
                         </div>
                         <div className='flex-grow ml-2 overflow-hidden'>
                           <div className='truncate'>
-                            [LIFEMCMBP2 -12% đơn 250K] Bộ Nồi Inox 3 Đáy SUNHOUSE SH334 16, 20, 24 cm
+                            [LIFEMCMBP2 -12% đơn 250K] Bộ Nồi Inox 3 Đáy
+                            SUNHOUSE SH334 16, 20, 24 cm
                           </div>
                         </div>
                         <div className='ml-2 flex-shrink-0'>
@@ -207,7 +253,9 @@ export default function Header() {
                       </div>
                     </div>
                     <div className='flex mt-6 items-center justify-between'>
-                      <div className='capitalize text-xs text-gray-500'>Thêm hàng vào giỏ</div>
+                      <div className='capitalize text-xs text-gray-500'>
+                        Thêm hàng vào giỏ
+                      </div>
                       <button className='capitalize bg-shopee_orange hover:bg-opacity-90 px-4 py-2 rounded-sm text-white'>
                         Xem giỏ hàng
                       </button>

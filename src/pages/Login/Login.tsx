@@ -4,17 +4,20 @@ import { useMutation } from '@tanstack/react-query'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { toast } from 'react-toastify'
+import { useContext } from 'react'
 
 import AuthInput from '@/components/AuthInput'
 import { loginValidationSchema } from '@/utils/validation'
 import { isAxios422Error } from '@/utils/error'
-import { ApiResponse } from '@/types/utils.type'
+import { ErrorResponse } from '@/types/utils.type'
 import { AuthCredentials } from '@/types/auth.type'
 import { loginApi } from '@/apis/auth.api'
+import { AppContext } from '@/contexts/app.context'
 
 type LoginValidationSchema = yup.InferType<typeof loginValidationSchema>
 
 export default function Login() {
+  const { setIsAuthenticated } = useContext(AppContext)
   const navigate = useNavigate()
 
   const {
@@ -33,11 +36,12 @@ export default function Login() {
   const handleLoginSubmit = handleSubmit((data) => {
     loginMutation.mutate(data, {
       onSuccess: (data) => {
+        setIsAuthenticated(true)
         toast.success(data.data.message)
         navigate('/')
       },
       onError: (error) => {
-        if (isAxios422Error<ApiResponse<AuthCredentials>>(error)) {
+        if (isAxios422Error<ErrorResponse<AuthCredentials>>(error)) {
           const authInputError = error.response?.data.data
           if (authInputError) {
             Object.keys(authInputError).forEach((key) => {
@@ -57,7 +61,11 @@ export default function Login() {
       <div className='container'>
         <div className='grid grid-cols-1 lg:grid-cols-5 py-12 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
-            <form className='p-10 rounded bg-white shadow-sm' noValidate onSubmit={handleLoginSubmit}>
+            <form
+              className='p-10 rounded bg-white shadow-sm'
+              noValidate
+              onSubmit={handleLoginSubmit}
+            >
               <div className='mb-8 text-2xl'>Đăng nhập</div>
               <AuthInput<LoginValidationSchema>
                 type='email'

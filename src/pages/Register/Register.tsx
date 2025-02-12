@@ -5,17 +5,20 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { omit } from 'lodash'
 import { toast } from 'react-toastify'
+import { useContext } from 'react'
 
 import AuthInput from '@/components/AuthInput'
 import { registerValidationSchema } from '@/utils/validation'
 import { isAxios422Error } from '@/utils/error'
 import { AuthCredentials } from '@/types/auth.type'
-import { ApiResponse } from '@/types/utils.type'
+import { ErrorResponse } from '@/types/utils.type'
 import { registerApi } from '@/apis/auth.api'
+import { AppContext } from '@/contexts/app.context'
 
 type RegisterValidationSchema = yup.InferType<typeof registerValidationSchema>
 
 export default function Register() {
+  const { setIsAuthenticated } = useContext(AppContext)
   const navigate = useNavigate()
 
   const {
@@ -35,17 +38,18 @@ export default function Register() {
     const body = omit(data, ['confirm_password'])
     registerMutation.mutate(body, {
       onSuccess: (data) => {
+        setIsAuthenticated(true)
         toast.success(data.data.message)
         navigate('/')
       },
       onError: (error) => {
         // Hiển thị lỗi cho từng input
-        if (isAxios422Error<ApiResponse<AuthCredentials>>(error)) {
+        if (isAxios422Error<ErrorResponse<AuthCredentials>>(error)) {
           // Trong trường hợp lỗi 422 thì error là object như sau:
-          // error: AxiosError<ApiResponse<AuthCredentials>>:
+          // error: AxiosError<ErrorResponse<AuthCredentials>>:
           //        message:  string
           //        code:     string
-          //        response: ApiResponse<AuthCredentials>
+          //        response: ErrorResponse<AuthCredentials>
           //                  status: number
           //                  statusText: string
           //                  data: AuthCredentials
@@ -94,7 +98,11 @@ export default function Register() {
       <div className='container'>
         <div className='grid grid-cols-1 lg:grid-cols-5 py-12 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
-            <form className='p-10 rounded bg-white shadow-sm' noValidate onSubmit={handleRegisterSubmit}>
+            <form
+              className='p-10 rounded bg-white shadow-sm'
+              noValidate
+              onSubmit={handleRegisterSubmit}
+            >
               <div className='mb-8 text-2xl'>Đăng ký</div>
               <AuthInput<RegisterValidationSchema>
                 type='email'

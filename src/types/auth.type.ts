@@ -1,12 +1,12 @@
 import { User } from './user.type'
-import { ApiResponse } from './utils.type'
+import { SuccessResponse } from './utils.type'
 
 export type AuthCredentials = {
   email: string
   password: string
 }
 
-export type AuthResponse = ApiResponse<{
+export type AuthResponse = SuccessResponse<{
   access_token: string
   expires: string
   user: User
