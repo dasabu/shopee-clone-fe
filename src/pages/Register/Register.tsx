@@ -19,7 +19,7 @@ import Button from '@/components/Button'
 type RegisterValidationSchema = yup.InferType<typeof registerValidationSchema>
 
 export default function Register() {
-  const { setIsAuthenticated } = useContext(AppContext)
+  const { setIsAuthenticated, setProfile } = useContext(AppContext)
   const navigate = useNavigate()
 
   const {
@@ -39,6 +39,7 @@ export default function Register() {
     const body = omit(data, ['confirm_password'])
     registerMutation.mutate(body, {
       onSuccess: (data) => {
+        setProfile(data.data.data.user)
         setIsAuthenticated(true)
         toast.success(data.data.message)
         navigate('/')

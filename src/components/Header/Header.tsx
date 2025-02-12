@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Popover from '../Popover'
 import { useMutation } from '@tanstack/react-query'
 import { logoutApi } from '@/apis/auth.api'
@@ -7,12 +7,16 @@ import { AppContext } from '@/contexts/app.context'
 import { toast } from 'react-toastify'
 
 export default function Header() {
-  const { isAuthenticated, setIsAuthenticated } = useContext(AppContext)
+  const navigate = useNavigate()
+  const { isAuthenticated, setIsAuthenticated, profile, setProfile } =
+    useContext(AppContext)
   const logoutMutation = useMutation({
     mutationFn: logoutApi,
     onSuccess: (data) => {
       setIsAuthenticated(false)
+      setProfile(null)
       toast.success(data.data.message)
+      navigate('/login')
     }
   })
 
@@ -96,7 +100,7 @@ export default function Header() {
                 />
               </div>
               {/* Name */}
-              <div>duyanhle</div>
+              <div>{profile?.email || 'user'}</div>
             </Popover>
           ) : (
             <div className='flex items-center'>
@@ -114,7 +118,7 @@ export default function Header() {
           )}
         </div>
         {/* Shopee logo + Search form + Cart icon */}
-        <div className='grid grid-cols-12 gap-4 mt-4 items-end'>
+        <div className='grid grid-cols-12 gap-4 mt-4 items-center'>
           {/* Logo */}
           <Link to='/' className='col-span-2'>
             <svg viewBox='0 0 192 65' className='h-11 fill-white'>

@@ -3,16 +3,22 @@ import axios, { AxiosError, AxiosInstance } from 'axios'
 import { toast } from 'react-toastify'
 import {
   clearAccessTokenFromLS,
+  clearProfileFromLS,
   getAccessTokenFromLS,
-  saveAccessTokenToLS
+  getProfileFromLS,
+  saveAccessTokenToLS,
+  saveProfileToLS
 } from './auth'
+import { User } from '@/types/user.type'
 
 class AxiosClient {
   instance: AxiosInstance
   private accessToken: string
+  private profile: User | null
 
   constructor() {
     this.accessToken = getAccessTokenFromLS()
+    this.profile = getProfileFromLS()
     this.instance = axios.create({
       baseURL: import.meta.env.VITE_API_URL,
       timeout: 10000, // 10s
@@ -39,15 +45,20 @@ class AxiosClient {
     this.instance.interceptors.response.use(
       (response) => {
         const { url } = response.config
-        // Đăng nhập/đăng ký: lưu access_token trả về trong response vào local storage
+        // Đăng nhập/đăng ký: lưu access_token và user profile trả về trong response vào local storage
         if (url === '/login' || url === '/register') {
-          this.accessToken = (response.data as AuthResponse).data.access_token
+          const authResponse: AuthResponse = response.data
+          this.accessToken = authResponse.data.access_token
+          this.profile = authResponse.data.user
           saveAccessTokenToLS(this.accessToken)
+          saveProfileToLS(this.profile)
         }
-        // Đăng xuất: xoá access_token khỏi local storage
+        // Đăng xuất: xoá access_token và user profile khỏi local storage
         else if (url === '/logout') {
           this.accessToken = ''
+          this.profile = null
           clearAccessTokenFromLS()
+          clearProfileFromLS()
         }
         return response
       },

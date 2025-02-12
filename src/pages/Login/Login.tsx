@@ -18,7 +18,7 @@ import Button from '@/components/Button'
 type LoginValidationSchema = yup.InferType<typeof loginValidationSchema>
 
 export default function Login() {
-  const { setIsAuthenticated } = useContext(AppContext)
+  const { setIsAuthenticated, setProfile } = useContext(AppContext)
   const navigate = useNavigate()
 
   const {
@@ -38,6 +38,7 @@ export default function Login() {
     loginMutation.mutate(data, {
       onSuccess: (data) => {
         setIsAuthenticated(true)
+        setProfile(data.data.data.user)
         toast.success(data.data.message)
         navigate('/')
       },
