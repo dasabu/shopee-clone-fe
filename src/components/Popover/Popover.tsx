@@ -1,5 +1,5 @@
 import { useState, useRef, useId, ElementType } from 'react'
-import { useFloating, FloatingPortal, arrow, shift, offset } from '@floating-ui/react-dom-interactions'
+import { useFloating, FloatingPortal, arrow, shift, offset, type Placement } from '@floating-ui/react-dom-interactions'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface PopoverProps {
@@ -9,6 +9,7 @@ interface PopoverProps {
 
   as?: ElementType // chọn thẻ HTML để render: span, div,...
   initialOpen?: boolean
+  placement?: Placement // vị trí popoverOptions
 }
 
 export default function Popover({
@@ -16,13 +17,15 @@ export default function Popover({
   popoverOptions,
   className,
   as: Element = 'div',
-  initialOpen = false
+  initialOpen = false,
+  placement = 'bottom-end'
 }: PopoverProps) {
   const [open, setOpen] = useState(initialOpen || false)
   const arrowRef = useRef<HTMLElement>(null)
   // Floating UI: https://www.npmjs.com/package/@floating-ui/react-dom-interactions
   const { x, y, reference, floating, strategy, middlewareData } = useFloating({
-    middleware: [offset(6), shift(), arrow({ element: arrowRef })]
+    middleware: [offset(6), shift(), arrow({ element: arrowRef })],
+    placement: placement
   })
 
   const id = useId() // tạo class id riêng cho các popover (default là floating-ui-root)
