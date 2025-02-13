@@ -2,7 +2,7 @@ import Button from '@/components/Button'
 import Input from '@/components/Input'
 import { Link } from 'react-router-dom'
 
-export default function AsideFilter() {
+export default function FilterSidebar() {
   return (
     <div className='py-4'>
       <Link to='/' className='flex items-center font-bold'>

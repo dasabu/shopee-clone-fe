@@ -1,4 +1,4 @@
-import { Paginate } from './utils.type'
+import { Pagination } from './utils.type'
 
 export interface Product {
   _id: string
@@ -23,17 +23,17 @@ export interface Product {
 
 export interface ProductList {
   products: Product[]
-  paginate: Paginate
+  pagination: Pagination
 }
 
 export interface ProductListQueryParams {
-  page?: number
-  limit?: number
+  page?: number | string
+  limit?: number | string
   sort_by?: 'createdAt' | 'view' | 'sold' | 'price'
   order?: 'asc' | 'desc'
-  exclude?: string
-  rating_filter?: number
-  price_max?: number
-  price_min?: number
+  exclude?: string | string
+  rating_filter?: number | string
+  price_max?: number | string
+  price_min?: number | string
   name?: string
 }

@@ -1,4 +1,4 @@
-export default function Rating({ rating }: { rating: number }) {
+export default function ProductRating({ rating }: { rating: number }) {
   return (
     <div className='flex items-center'>
       {Array(5)

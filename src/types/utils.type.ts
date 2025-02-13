@@ -8,7 +8,7 @@ export interface ErrorResponse<Data> {
   data?: Data
 }
 
-export interface Paginate {
+export interface Pagination {
   page: number
   limit: number
   page_size: number

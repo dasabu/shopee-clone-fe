@@ -1,13 +1,9 @@
-import { Product as ProductType } from '@/types/product.type'
 import { formatCurrency, formatToSocialStyle } from '@/utils/product'
 import { Link } from 'react-router-dom'
-import Rating from '../Rating'
+import { Product } from '@/types/product.type'
+import ProductRating from '../ProductRating'
 
-interface ProductProps {
-  product: ProductType
-}
-
-export default function Product({ product }: ProductProps) {
+export default function ProductCard({ product }: { product: Product }) {
   return (
     <Link to='/'>
       <div className='bg-white shadow rounded-sm hover:translate-y-[-0.04rem] hover:shadow-md duration-100 transition-transform overflow-hidden'>
@@ -33,7 +29,7 @@ export default function Product({ product }: ProductProps) {
             </div>
           </div>
           <div className='mt-3 flex items-center justify-end'>
-            <Rating rating={product.rating} />
+            <ProductRating rating={product.rating} />
             <div className='ml-2 text-sm'>
               <span>{formatToSocialStyle(product.sold)}</span>
               <span className='ml-1'>Đã bán</span>

@@ -21,7 +21,9 @@ Ví dụ
   "message": "Lấy sản phẩm thành công",
   "data": {
     "_id": "60afb2c76ef5b902180aacba",
-    "images": ["https://api-ecom.duthanhduoc.com/images/bbea6d3e-e5b1-494f-ab16-02eece816d50.jpg"],
+    "images": [
+      "https://api-ecom.duthanhduoc.com/images/bbea6d3e-e5b1-494f-ab16-02eece816d50.jpg"
+    ],
     "price": 3190000,
     "rating": 4.6,
     "price_before_discount": 3990000,
@@ -191,7 +193,7 @@ Response
   "message": "Lấy các sản phẩm thành công",
   "data": {
     "products": [],
-    "pagination": {
+    "ProductListPagination": {
       "page": 1,
       "limit": 30,
       "page_size": 2
