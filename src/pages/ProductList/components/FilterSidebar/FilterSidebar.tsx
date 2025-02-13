@@ -1,11 +1,27 @@
 import Button from '@/components/Button'
 import Input from '@/components/Input'
+import { Category } from '@/types/category.type'
+import { ProductListQueryParams } from '@/types/product.type'
+import { handleSearchParams } from '@/utils/product'
 import { Link } from 'react-router-dom'
 
-export default function FilterSidebar() {
+interface FilterSidebarProps {
+  queryParams: ProductListQueryParams
+  categories: Category[]
+}
+
+export default function FilterSidebar({
+  queryParams,
+  categories
+}: FilterSidebarProps) {
+  const { category: categoryOption } = queryParams // category lấy từ URL
+
   return (
     <div className='py-4'>
-      <Link to='/' className='flex items-center font-bold'>
+      <Link
+        to='/'
+        className={`flex items-center font-bold ${!categoryOption && 'text-shopee_orange'}`}
+      >
         <svg viewBox='0 0 12 10' className='w-3 h-4 mr-3 fill-current'>
           <g fillRule='evenodd' stroke='none' strokeWidth={1}>
             <g transform='translate(-373 -208)'>
@@ -23,25 +39,31 @@ export default function FilterSidebar() {
       </Link>
       <div className='bg-gray-300 h-[1px] my-4' />
       <ul>
-        <li className='py-2 pl-2'>
-          <Link
-            to='/'
-            className='relative px-2 text-shopee_orange font-semibold'
-          >
-            <svg
-              viewBox='0 0 4 7'
-              className='fill-shopee_orange h-2 w-2 absolute top-1 left-[-10px]'
-            >
-              <polygon points='4 3.5 0 0 0 7' />
-            </svg>
-            Thời trang nam
-          </Link>
-        </li>
-        <li className='py-2 pl-2'>
-          <Link to='/' className='relative px-2 '>
-            Điện thoại
-          </Link>
-        </li>
+        {categories.map((category) => {
+          const isActive = categoryOption === category._id
+          return (
+            <li key={category._id} className='py-2 pl-2'>
+              <Link
+                to={{
+                  pathname: '/',
+                  search: handleSearchParams({
+                    ...queryParams,
+                    category: category._id
+                  })
+                }}
+                className={`relative px-2 ${isActive && 'text-shopee_orange font-semibold'}`}
+              >
+                <svg
+                  viewBox='0 0 4 7'
+                  className={`h-2 w-2 absolute top-1 left-[-10px] ${isActive && 'fill-shopee_orange'}`}
+                >
+                  <polygon points='4 3.5 0 0 0 7' />
+                </svg>
+                {category.name}
+              </Link>
+            </li>
+          )
+        })}
       </ul>
       <Link to='/' className='flex items-center font-bold mt-4 uppercase'>
         <svg

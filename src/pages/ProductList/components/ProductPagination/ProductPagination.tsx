@@ -1,5 +1,6 @@
 import { ProductListQueryParams } from '@/types/product.type'
-import { Link, createSearchParams } from 'react-router-dom'
+import { handleSearchParams } from '@/utils/product'
+import { Link } from 'react-router-dom'
 
 interface ProductPaginationProps {
   queryParams: ProductListQueryParams
@@ -60,13 +61,7 @@ export default function Pagination({
               pathname: '/',
               // search: '?page=1&limit=10'
               // createSearchParams nhận vào list các [key: string, value: string]
-              search: createSearchParams(
-                Object.fromEntries(
-                  Object.entries({ ...queryParams, page: p.toString() }).map(
-                    ([key, value]) => [key, value?.toString() || '']
-                  )
-                )
-              ).toString()
+              search: handleSearchParams({ ...queryParams, page: p })
             }}
             key={index}
             className={`rounded px-3 py-2 shadow-sm mx-2 border ${

@@ -1,6 +1,7 @@
 import { ProductListQueryParams } from '@/types/product.type'
 import { ORDER, SORT_BY } from '@/utils/constants'
-import { createSearchParams, Link, useNavigate } from 'react-router-dom'
+import { handleSearchParams } from '@/utils/product'
+import { Link, useNavigate } from 'react-router-dom'
 
 interface SortBarProps {
   queryParams: ProductListQueryParams
@@ -30,28 +31,18 @@ export default function SortBar({ queryParams, pageSize }: SortBarProps) {
 
     navigate({
       pathname: '/',
-      search: createSearchParams(
-        Object.fromEntries(
-          Object.entries({ ...restQueryParams, sort_by: sortOption }).map(
-            ([key, value]) => [key, value?.toString() || '']
-          )
-        )
-      ).toString()
+      search: handleSearchParams({ ...restQueryParams, sort_by: sortOption })
     })
   }
 
   const handlePriceOrder = (orderOption: OrderOption) => {
     navigate({
       pathname: '/',
-      search: createSearchParams(
-        Object.fromEntries(
-          Object.entries({
-            ...queryParams,
-            sort_by: SORT_BY.PRICE,
-            order: orderOption
-          }).map(([key, value]) => [key, value?.toString() || ''])
-        )
-      ).toString()
+      search: handleSearchParams({
+        ...queryParams,
+        sort_by: SORT_BY.PRICE,
+        order: orderOption
+      })
     })
   }
 
@@ -112,14 +103,7 @@ export default function SortBar({ queryParams, pageSize }: SortBarProps) {
             <Link
               to={{
                 pathname: '/',
-                search: createSearchParams(
-                  Object.fromEntries(
-                    Object.entries({
-                      ...queryParams,
-                      page: (page - 1).toString()
-                    }).map(([key, value]) => [key, value?.toString() || ''])
-                  )
-                ).toString()
+                search: handleSearchParams({ ...queryParams, page: page - 1 })
               }}
               className='flex justify-center items-center w-9 h-8 px-3 rounded-tl-sm rounded-bl-sm bg-white hover:bg-slate-100 shadow'
             >
@@ -164,14 +148,7 @@ export default function SortBar({ queryParams, pageSize }: SortBarProps) {
             <Link
               to={{
                 pathname: '/',
-                search: createSearchParams(
-                  Object.fromEntries(
-                    Object.entries({
-                      ...queryParams,
-                      page: (page + 1).toString()
-                    }).map(([key, value]) => [key, value?.toString() || ''])
-                  )
-                ).toString()
+                search: handleSearchParams({ ...queryParams, page: page + 1 })
               }}
               className='flex justify-center items-center w-9 h-8 px-3 rounded-tl-sm rounded-bl-sm bg-white hover:bg-slate-100 shadow'
             >

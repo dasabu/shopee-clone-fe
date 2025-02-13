@@ -36,4 +36,5 @@ export interface ProductListQueryParams {
   price_max?: number | string
   price_min?: number | string
   name?: string
+  category?: string
 }
