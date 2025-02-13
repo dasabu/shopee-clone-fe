@@ -7,7 +7,7 @@ import { omit } from 'lodash'
 import { toast } from 'react-toastify'
 import { useContext } from 'react'
 
-import AuthInput from '@/components/AuthInput'
+import Input from '@/components/Input'
 import { registerValidationSchema } from '@/utils/validation'
 import { isAxios422Error } from '@/utils/error'
 import { AuthCredentials } from '@/types/auth.type'
@@ -98,7 +98,7 @@ export default function Register() {
   return (
     <div className='bg-shopee_orange'>
       <div className='container'>
-        <div className='grid grid-cols-1 lg:grid-cols-5 py-12 lg:py-32 lg:pr-10'>
+        <div className='grid grid-cols-1 md:px-52 sm:px-24 lg:grid-cols-5 py-12 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
             <form
               className='p-10 rounded bg-white shadow-sm'
@@ -106,14 +106,14 @@ export default function Register() {
               onSubmit={handleRegisterSubmit}
             >
               <div className='mb-8 text-2xl'>Đăng ký</div>
-              <AuthInput<RegisterValidationSchema>
+              <Input<RegisterValidationSchema>
                 type='email'
                 placeholder='Email'
                 name='email'
                 register={register}
                 errorMessage={errors?.email?.message as string}
               />
-              <AuthInput<RegisterValidationSchema>
+              <Input<RegisterValidationSchema>
                 type='password'
                 placeholder='Mật khẩu'
                 name='password'
@@ -121,7 +121,7 @@ export default function Register() {
                 errorMessage={errors?.password?.message as string}
                 autoComplete='on'
               />
-              <AuthInput<RegisterValidationSchema>
+              <Input<RegisterValidationSchema>
                 type='password'
                 placeholder='Nhập lại mật khẩu'
                 name='confirm_password'

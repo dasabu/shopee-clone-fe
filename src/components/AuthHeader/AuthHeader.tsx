@@ -6,7 +6,11 @@ export default function AuthHeader() {
       <div className='max-w-7xl mx-auto px-4'>
         <nav className='flex items-end'>
           <Link to='/'>
-            <img className='h-8 lg:h-11' src='/src/assets/shopee-logo.svg' alt='Shopee Logo' />
+            <img
+              className='h-10 lg:h-12'
+              src='/src/assets/shopee-logo.svg'
+              alt='Shopee Logo'
+            />
           </Link>
         </nav>
       </div>

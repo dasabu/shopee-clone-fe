@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { toast } from 'react-toastify'
 import { useContext } from 'react'
 
-import AuthInput from '@/components/AuthInput'
+import Input from '@/components/Input'
 import { loginValidationSchema } from '@/utils/validation'
 import { isAxios422Error } from '@/utils/error'
 import { ErrorResponse } from '@/types/utils.type'
@@ -61,7 +61,7 @@ export default function Login() {
   return (
     <div className='bg-shopee_orange'>
       <div className='container'>
-        <div className='grid grid-cols-1 lg:grid-cols-5 py-12 lg:py-32 lg:pr-10'>
+        <div className='grid grid-cols-1 md:px-52 sm:px-24 lg:grid-cols-5 py-12 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
             <form
               className='p-10 rounded bg-white shadow-sm'
@@ -69,14 +69,14 @@ export default function Login() {
               onSubmit={handleLoginSubmit}
             >
               <div className='mb-8 text-2xl'>Đăng nhập</div>
-              <AuthInput<LoginValidationSchema>
+              <Input<LoginValidationSchema>
                 type='email'
                 placeholder='Email'
                 name='email'
                 register={register}
                 errorMessage={errors?.email?.message}
               />
-              <AuthInput<LoginValidationSchema>
+              <Input<LoginValidationSchema>
                 type='password'
                 placeholder='Mật khẩu'
                 name='password'
@@ -84,7 +84,7 @@ export default function Login() {
                 errorMessage={errors?.password?.message}
                 autoComplete='on'
               />
-              <div className='mt-5'>
+              <div>
                 <Button
                   type='submit'
                   className='w-full text-center py-4 px-2 uppercase bg-red-500 text-white text-sm hover:bg-red-600'
