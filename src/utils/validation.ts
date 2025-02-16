@@ -1,6 +1,14 @@
 import * as yup from 'yup'
 
-export const registerValidationSchema = yup.object({
+function isValidPriceRange(this: yup.TestContext<yup.AnyObject>) {
+  const { price_min, price_max } = this.parent
+  if (price_max !== '' && price_min !== '') {
+    return Number(price_max) >= Number(price_min)
+  }
+  return price_min !== '' || price_max !== ''
+}
+
+export const formSchema = yup.object({
   email: yup
     .string()
     .required('Bạn chưa nhập email')
@@ -15,8 +23,30 @@ export const registerValidationSchema = yup.object({
   confirm_password: yup
     .string()
     .required('Bạn chưa nhập lại mật khẩu')
-    .oneOf([yup.ref('password')], 'Mật khẩu nhập lại không khớp')
+    .oneOf([yup.ref('password')], 'Mật khẩu nhập lại không khớp'),
+  price_min: yup.string().test({
+    name: 'invalid-price',
+    message: 'Giá không hợp lệ',
+    // Viết chung
+    test: isValidPriceRange
+    // Viết riêng cho từng field
+    /*
+    test: function (value?: string) {
+      const price_min = value ?? ''
+      const price_max = this.parent.price_max ?? ''
+
+      if (price_min !== '' && price_max !== '') {
+        return Number(price_max) >= Number(price_min)
+      }
+      return price_min !== '' || price_max !== ''
+    }
+    */
+  }),
+  price_max: yup.string().test({
+    name: 'invalid-price',
+    message: 'Giá không hợp lệ',
+    test: isValidPriceRange
+  })
 })
 
-// Login
-export const loginValidationSchema = registerValidationSchema.omit(['confirm_password'])
+export type FormSchema = yup.InferType<typeof formSchema>

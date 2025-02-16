@@ -1,14 +1,13 @@
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
-import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { omit } from 'lodash'
 import { toast } from 'react-toastify'
 import { useContext } from 'react'
 
+import { FormSchema, formSchema } from '@/utils/validation'
 import Input from '@/components/Input'
-import { registerValidationSchema } from '@/utils/validation'
 import { isAxios422Error } from '@/utils/error'
 import { AuthCredentials } from '@/types/auth.type'
 import { ErrorResponse } from '@/types/utils.type'
@@ -16,7 +15,15 @@ import { registerApi } from '@/apis/auth.api'
 import { AppContext } from '@/contexts/app.context'
 import Button from '@/components/Button'
 
-type RegisterValidationSchema = yup.InferType<typeof registerValidationSchema>
+type RegisterFormData = Pick<
+  FormSchema,
+  'email' | 'password' | 'confirm_password'
+>
+const registerSchema = formSchema.pick([
+  'email',
+  'password',
+  'confirm_password'
+])
 
 export default function Register() {
   const { setIsAuthenticated, setProfile } = useContext(AppContext)
@@ -27,8 +34,8 @@ export default function Register() {
     handleSubmit,
     setError,
     formState: { errors }
-  } = useForm<RegisterValidationSchema>({
-    resolver: yupResolver(registerValidationSchema)
+  } = useForm<RegisterFormData>({
+    resolver: yupResolver(registerSchema)
   })
 
   const registerMutation = useMutation({
@@ -69,7 +76,7 @@ export default function Register() {
           //                         .email?:    // If an error exists in the email input
           //                         .password?: // If an error exists in the password input
 
-          const authInputError = error.response?.data.data
+          const authFormError = error.response?.data.data
           // Trong trường hợp object không có nhiều field (chỉ có email và password) thì có thể làm như sau:
           // if (authInputError?.email) {
           //   setError('email', {
@@ -83,10 +90,10 @@ export default function Register() {
           // }
 
           // Nhưng đối với object có rất nhiều field: lặp qua từng field và check
-          if (authInputError) {
-            Object.keys(authInputError).forEach((key) => {
+          if (authFormError) {
+            Object.keys(authFormError).forEach((key) => {
               setError(key as keyof AuthCredentials, {
-                message: authInputError[key as keyof AuthCredentials]
+                message: authFormError[key as keyof AuthCredentials]
               })
             })
           }
@@ -106,14 +113,14 @@ export default function Register() {
               onSubmit={handleRegisterSubmit}
             >
               <div className='mb-8 text-2xl'>Đăng ký</div>
-              <Input<RegisterValidationSchema>
+              <Input<RegisterFormData>
                 type='email'
                 placeholder='Email'
                 name='email'
                 register={register}
                 errorMessage={errors?.email?.message as string}
               />
-              <Input<RegisterValidationSchema>
+              <Input<RegisterFormData>
                 type='password'
                 placeholder='Mật khẩu'
                 name='password'
@@ -121,7 +128,7 @@ export default function Register() {
                 errorMessage={errors?.password?.message as string}
                 autoComplete='on'
               />
-              <Input<RegisterValidationSchema>
+              <Input<RegisterFormData>
                 type='password'
                 placeholder='Nhập lại mật khẩu'
                 name='confirm_password'
