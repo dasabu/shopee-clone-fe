@@ -1,21 +1,21 @@
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
-import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { toast } from 'react-toastify'
 import { useContext } from 'react'
 
 import Input from '@/components/Input'
-import { loginValidationSchema } from '@/utils/validation'
 import { isAxios422Error } from '@/utils/error'
 import { ErrorResponse } from '@/types/utils.type'
 import { AuthCredentials } from '@/types/auth.type'
 import { loginApi } from '@/apis/auth.api'
 import { AppContext } from '@/contexts/app.context'
 import Button from '@/components/Button'
+import { formSchema, FormSchema } from '@/utils/validation'
 
-type LoginValidationSchema = yup.InferType<typeof loginValidationSchema>
+type LoginFormData = Pick<FormSchema, 'email' | 'password'>
+const loginSchema = formSchema.pick(['email', 'password'])
 
 export default function Login() {
   const { setIsAuthenticated, setProfile } = useContext(AppContext)
@@ -26,8 +26,8 @@ export default function Login() {
     handleSubmit,
     setError,
     formState: { errors }
-  } = useForm<LoginValidationSchema>({
-    resolver: yupResolver(loginValidationSchema)
+  } = useForm<LoginFormData>({
+    resolver: yupResolver(loginSchema)
   })
 
   const loginMutation = useMutation({
@@ -44,13 +44,12 @@ export default function Login() {
       },
       onError: (error) => {
         if (isAxios422Error<ErrorResponse<AuthCredentials>>(error)) {
-          const authInputError = error.response?.data.data
-          if (authInputError) {
-            Object.keys(authInputError).forEach((key) => {
+          const authFormError = error.response?.data.data
+          if (authFormError) {
+            Object.keys(authFormError).forEach((key) => {
               setError(key as keyof AuthCredentials, {
-                message: authInputError[key as keyof AuthCredentials]
+                message: authFormError[key as keyof AuthCredentials]
               })
-              console.log(errors)
             })
           }
         }
@@ -69,14 +68,14 @@ export default function Login() {
               onSubmit={handleLoginSubmit}
             >
               <div className='mb-8 text-2xl'>Đăng nhập</div>
-              <Input<LoginValidationSchema>
+              <Input<LoginFormData>
                 type='email'
                 placeholder='Email'
                 name='email'
                 register={register}
                 errorMessage={errors?.email?.message}
               />
-              <Input<LoginValidationSchema>
+              <Input<LoginFormData>
                 type='password'
                 placeholder='Mật khẩu'
                 name='password'

@@ -20,20 +20,15 @@ export default function Input<T extends FieldValues>({
   classNameError = 'my-2 text-red-600 min-h-[1.25rem] text-sm',
   register,
   name,
-  // default
   className,
-  type,
-  placeholder,
-  autoComplete
+  ...rest
 }: InputProps<T>) {
   return (
     <div className={className}>
       <input
-        type={type}
-        placeholder={placeholder}
-        autoComplete={autoComplete}
         className={classNameInput}
         {...(register && name ? register(name) : {})} // có register và name mới truyền vào
+        {...rest}
       />
       <div className={classNameError}>{errorMessage}</div>
     </div>
