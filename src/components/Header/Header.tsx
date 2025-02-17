@@ -5,9 +5,20 @@ import { logoutApi } from '@/apis/auth.api'
 import { useContext } from 'react'
 import { AppContext } from '@/contexts/app.context'
 import { toast } from 'react-toastify'
+import { useQueryParamsProductList } from '@/hooks/useQueryParams'
+import { useForm } from 'react-hook-form'
+import { FormSchema, formSchema } from '@/utils/validation'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { handleSearchParams } from '@/utils/product'
+import { omit } from 'lodash'
+
+type NameFormData = Pick<FormSchema, 'name'>
+
+const nameSchema = formSchema.pick(['name'])
 
 export default function Header() {
   const navigate = useNavigate()
+
   const { isAuthenticated, setIsAuthenticated, profile, setProfile } =
     useContext(AppContext)
   const logoutMutation = useMutation({
@@ -23,6 +34,30 @@ export default function Header() {
   const handleLogout = () => {
     logoutMutation.mutate()
   }
+
+  /* Search */
+  const queryParamsProductList = useQueryParamsProductList()
+  const { register, handleSubmit } = useForm<NameFormData>({
+    defaultValues: {
+      name: ''
+    },
+    resolver: yupResolver(nameSchema)
+  })
+
+  const handleSearch = handleSubmit((data) => {
+    console.log(data)
+    const queryParams = queryParamsProductList.order
+      ? omit({ ...queryParamsProductList, name: data.name }, [
+          'order',
+          'sort_by'
+        ])
+      : { ...queryParamsProductList, name: data.name }
+    navigate({
+      pathname: '/',
+      search: handleSearchParams(queryParams)
+    })
+  })
+
   return (
     <div className='pb-5 pt-2 bg-[linear-gradient(-180deg,#f53d2d,#f63)] text-white'>
       <div className='container'>
@@ -128,13 +163,13 @@ export default function Header() {
             </svg>
           </Link>
           {/* Search form */}
-          <form className='col-span-9'>
+          <form className='col-span-9' onSubmit={handleSearch}>
             <div className='bg-white rounded-sm p-1 flex'>
               <input
                 type='text'
-                name='search'
                 className='text-black px-3 py-2 flex-grow border-none outline-none bg-transparent'
                 placeholder='Free Ship Đơn Từ 0Đ'
+                {...register('name')}
               />
               {/* Search button */}
               <button className='rounded-sm py-2 px-6 flex-shrink-0 bg-shopee_orange hover:opacity-90'>

@@ -27,8 +27,6 @@ module.exports = {
           paddingRight: theme('spacing.4')
         }
       })
-    }),
-    // https://tailwindcss.com/docs/line-clamp
-    require('@tailwindcss/line-clamp')
+    })
   ]
 }
