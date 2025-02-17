@@ -46,7 +46,8 @@ export const formSchema = yup.object({
     name: 'invalid-price',
     message: 'Giá không hợp lệ',
     test: isValidPriceRange
-  })
+  }),
+  name: yup.string().trim().required() // product name
 })
 
 export type FormSchema = yup.InferType<typeof formSchema>

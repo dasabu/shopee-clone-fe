@@ -1,43 +1,14 @@
-import useQueryParams from '@/hooks/useQueryParams'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { getProductsApi } from '@/apis/product.api'
-import { isUndefined, omitBy } from 'lodash'
-import { ProductListQueryParams } from '@/types/product.type'
 import ProductCard from './components/ProductCard'
 import SortBar from './components/SortBar'
 import ProductPagination from './components/ProductPagination'
 import FilterSidebar from './components/FilterSidebar'
 import { getCategoriesApi } from '@/apis/category.api'
+import { useQueryParamsProductList } from '@/hooks/useQueryParams'
 
 export default function ProductList() {
-  const {
-    page,
-    limit,
-    sort_by,
-    exclude,
-    name,
-    order,
-    price_max,
-    price_min,
-    rating_filter,
-    category
-  } = useQueryParams()
-  // Filter ra các key bị undefined
-  const queryParams = omitBy(
-    {
-      page: page || 1,
-      limit: limit || 10,
-      sort_by,
-      exclude,
-      name,
-      order,
-      price_max,
-      price_min,
-      rating_filter,
-      category
-    },
-    isUndefined
-  ) as ProductListQueryParams
+  const queryParams = useQueryParamsProductList()
 
   const { data: productsData } = useQuery({
     queryKey: ['products', queryParams],
