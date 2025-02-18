@@ -7,6 +7,7 @@ import Register from '@/pages/Register'
 import Profile from '@/pages/Profile'
 import { AppContext } from '@/contexts/app.context'
 import { useContext } from 'react'
+import ProductDetail from '@/pages/ProductDetail'
 
 /* đã login/register */
 function ProtectedRoute() {
@@ -28,6 +29,15 @@ export default function useRoutesElements() {
       element: (
         <MainLayout>
           <ProductList />
+        </MainLayout>
+      )
+    },
+    {
+      path: '/:id',
+      index: true,
+      element: (
+        <MainLayout>
+          <ProductDetail />
         </MainLayout>
       )
     },

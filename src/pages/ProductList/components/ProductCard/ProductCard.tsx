@@ -5,7 +5,7 @@ import ProductRating from '../ProductRating'
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
-    <Link to='/'>
+    <Link to={`/${product._id}`}>
       <div className='bg-white shadow rounded-sm hover:translate-y-[-0.04rem] hover:shadow-md duration-100 transition-transform overflow-hidden'>
         <div className='w-full pt-[100%] relative'>
           <img

@@ -12,6 +12,9 @@ export const formatToSocialStyle = (value: number) =>
     .format(value)
     .replace('.', ',')
 
+export const rateSale = (original: number, sale: number) =>
+  Math.round(((original - sale) / original) * 100) + '%'
+
 export const handleSearchParams = (queryParams: ProductListQueryParams) => {
   return createSearchParams(
     Object.fromEntries(
