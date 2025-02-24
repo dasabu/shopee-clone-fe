@@ -2,10 +2,11 @@ import { formatCurrency, formatToSocialStyle } from '@/utils/product'
 import { Link } from 'react-router-dom'
 import { Product } from '@/types/product.type'
 import ProductRating from '../ProductRating'
+import { generateSlug } from '@/utils/slug'
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
-    <Link to='/'>
+    <Link to={`/${generateSlug(product.name, product._id)}`}>
       <div className='bg-white shadow rounded-sm hover:translate-y-[-0.04rem] hover:shadow-md duration-100 transition-transform overflow-hidden'>
         <div className='w-full pt-[100%] relative'>
           <img
