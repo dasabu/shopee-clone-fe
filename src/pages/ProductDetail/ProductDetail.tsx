@@ -21,7 +21,7 @@ export default function ProductDetail() {
   })
   const product = productDetailData?.data.data
 
-  /* All products */
+  /* Similar products */
   const queryParams = {
     limit: '6',
     page: '1',
