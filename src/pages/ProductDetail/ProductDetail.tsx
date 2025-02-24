@@ -6,7 +6,7 @@ import { getProductDetailApi } from '@/apis/product.api'
 import ProductRating from '../ProductList/components/ProductRating'
 import { formatCurrency, formatToSocialStyle, rateSale } from '@/utils/product'
 import InputNumber from '@/components/InputNumber'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -18,7 +18,7 @@ export default function ProductDetail() {
 
   /* Slider */
   const [sliderIndices, setSliderIndices] = useState<number[]>([0, 5])
-  // Sử dụng useMemo tránh trường hợp data thay đổi khi component bị re-render
+  // avoid changing data when component is re-rendered
   const sliderImages = useMemo(
     () => (product ? product.images.slice(...sliderIndices) : []),
     [product, sliderIndices]
@@ -44,6 +44,35 @@ export default function ProductDetail() {
   const handleHoverImage = (image: string) => {
     setActiveImage(image)
   }
+  // Zoom functionality
+  const activeImageRef = useRef<HTMLImageElement>(null)
+  const handleZoom = (
+    event: React.MouseEvent<HTMLImageElement, MouseEvent>
+  ) => {
+    const image = activeImageRef.current as HTMLImageElement
+    const { naturalHeight, naturalWidth } = image
+    image.style.width = naturalHeight + 'px' // convert to string
+    image.style.width = naturalWidth + 'px'
+    image.style.maxWidth = 'unset' // reset 'maxWidth' property because of default it will '100%' of the container
+
+    /**
+     * Another way to calculate offsetX, offsetY:
+     * const { offsetX, offsetY } = event.nativeEvent
+     * But we have to avoid bubble event: adding pointer-events-none into div className
+     */
+
+    const rect = event.currentTarget.getBoundingClientRect()
+    const offsetX = event.pageX - (rect.x + window.scrollX)
+    const offsetY = event.pageY - (rect.y + window.scrollY)
+    const top = offsetY * (1 - naturalHeight / rect.height)
+    const left = offsetX * (1 - naturalWidth / rect.width)
+    image.style.top = top + 'px'
+    image.style.left = left + 'px'
+  }
+
+  const handleRemoveZoom = () => {
+    activeImageRef.current?.removeAttribute('style')
+  }
 
   if (!product) return null
   return (
@@ -53,12 +82,18 @@ export default function ProductDetail() {
           <div className='grid grid-cols-12 gap-9'>
             <div className='col-span-5'>
               {/* Product Images: Active Image + Slider */}
-              <div className='relative w-full pt-[100%] shadow'>
+              <div
+                className='relative w-full pt-[100%] shadow overflow-hidden cursor-zoom-in'
+                // Zoom: add pointer-events-none here
+                onMouseMove={handleZoom}
+                onMouseLeave={handleRemoveZoom}
+              >
                 {/* Active Image */}
                 <img
                   src={activeImage}
                   alt={product.name}
                   className='absolute top-0 left-0 h-full w-full bg-white object-cover'
+                  ref={activeImageRef}
                 />
               </div>
               {/* Slider */}
@@ -93,7 +128,8 @@ export default function ProductDetail() {
                         src={img}
                         alt={`${index}-${product.name}`}
                         className='absolute top-0 left-0 h-full w-full cursor-pointer bg-white object-cover'
-                        onClick={() => {
+                        // Hover: move to next image
+                        onMouseEnter={() => {
                           handleHoverImage(img)
                         }}
                       />
