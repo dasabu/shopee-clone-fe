@@ -2,22 +2,47 @@ import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import DOMPurify from 'dompurify'
 
-import { getProductDetailApi } from '@/apis/product.api'
+import { getProductDetailApi, getProductsApi } from '@/apis/product.api'
 import ProductRating from '../ProductList/components/ProductRating'
 import { formatCurrency, formatToSocialStyle, rateSale } from '@/utils/product'
 import InputNumber from '@/components/InputNumber'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { getIdFromSlug } from '@/utils/slug'
+import ProductCard from '../ProductList/components/ProductCard'
 
 export default function ProductDetail() {
   const { slug } = useParams()
   const id = getIdFromSlug(slug as string)
 
+  /* Product Detail */
   const { data: productDetailData } = useQuery({
     queryKey: ['product', id],
     queryFn: () => getProductDetailApi(id as string)
   })
   const product = productDetailData?.data.data
+
+  /* All products */
+  const queryParams = {
+    limit: '6',
+    page: '1',
+    category: product?.category._id
+  }
+  const { data: productsData } = useQuery({
+    queryKey: ['products', queryParams],
+    queryFn: () => getProductsApi(queryParams),
+    /**
+     * khi product có data mới gọi API này
+     * do lúc đầu product bị undefined, sau đó mới có data => API bị gọi 2 lần)
+     */
+    enabled: Boolean(product),
+    /**
+     * tại / thì API có key 'products' được gọi 1 lần
+     * sau đó click vào sản phẩm -> API này được gọi 1 lần nữa
+     * giải quyết: thêm staleTime BẰNG NHAU vào những nơi gọi API này (key: 'products')
+     * do staleTime khác nhau giữa 2 lần gọi (cụ thể là lần thứ 1 > lần thứ 2) thì API sẽ bị gọi lại ở lần thứ 2
+     */
+    staleTime: 3 * 60 * 1000 // 3 mins
+  })
 
   /* Slider */
   const [sliderIndices, setSliderIndices] = useState<number[]>([0, 5])
@@ -306,6 +331,21 @@ export default function ProductDetail() {
               }}
             />
           </div>
+        </div>
+      </div>
+      {/* Similar Product (same category) */}
+      <div className='mt-8'>
+        <div className='container'>
+          <div className='uppercase text-gray-400'>Có thể bạn cũng thích</div>
+          {productsData && (
+            <div className='mt-6 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3'>
+              {productsData.data.data.products.map((product) => (
+                <div className='col-span-1'>
+                  <ProductCard key={product._id} product={product} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
