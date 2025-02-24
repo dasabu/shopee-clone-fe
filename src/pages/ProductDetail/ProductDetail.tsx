@@ -6,6 +6,7 @@ import { getProductDetailApi } from '@/apis/product.api'
 import ProductRating from '../ProductList/components/ProductRating'
 import { formatCurrency, formatToSocialStyle, rateSale } from '@/utils/product'
 import InputNumber from '@/components/InputNumber'
+import { useEffect, useMemo, useState } from 'react'
 
 export default function ProductDetail() {
   const { id } = useParams()
@@ -14,22 +15,60 @@ export default function ProductDetail() {
     queryFn: () => getProductDetailApi(id as string)
   })
   const product = productDetailData?.data.data
+
+  /* Slider */
+  const [sliderIndices, setSliderIndices] = useState<number[]>([0, 5])
+  // Sử dụng useMemo tránh trường hợp data thay đổi khi component bị re-render
+  const sliderImages = useMemo(
+    () => (product ? product.images.slice(...sliderIndices) : []),
+    [product, sliderIndices]
+  )
+  const nextRange = () => {
+    if (sliderIndices[1] < product!.images.length) {
+      setSliderIndices((prev) => [prev[0] + 1, prev[1] + 1])
+    }
+  }
+  const prevRange = () => {
+    if (sliderIndices[0] > 0) {
+      setSliderIndices((prev) => [prev[0] - 1, prev[1] - 1])
+    }
+  }
+
+  /* Active Image */
+  const [activeImage, setActiveImage] = useState<string>('')
+  useEffect(() => {
+    if (product && product.images.length > 0) {
+      setActiveImage(product.images[0])
+    }
+  }, [product])
+  const handleHoverImage = (image: string) => {
+    setActiveImage(image)
+  }
+
   if (!product) return null
   return (
     <div className='bg-gray-200 py-6'>
-      <div className='bg-white p-4 shadow'>
-        <div className='container'>
+      <div className='container'>
+        <div className='bg-white p-4 shadow'>
           <div className='grid grid-cols-12 gap-9'>
             <div className='col-span-5'>
+              {/* Product Images: Active Image + Slider */}
               <div className='relative w-full pt-[100%] shadow'>
+                {/* Active Image */}
                 <img
-                  src={product.image}
+                  src={activeImage}
                   alt={product.name}
                   className='absolute top-0 left-0 h-full w-full bg-white object-cover'
                 />
               </div>
+              {/* Slider */}
               <div className='relative mt-4 grid grid-cols-5 gap-1'>
-                <button className='absolute left-0 top-1/2 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'>
+                {/* Prev Button */}
+                <button
+                  className={`absolute left-0 top-1/2 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 hover:bg-black/40
+                             text-white ${sliderIndices[0] === 0 && 'cursor-not-allowed'}`}
+                  onClick={prevRange}
+                >
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
@@ -45,22 +84,31 @@ export default function ProductDetail() {
                     />
                   </svg>
                 </button>
-                {product.images.slice(0, 5).map((img, index) => {
-                  const isActive = index === 0
+                {/* Slider Images */}
+                {sliderImages.map((img, index) => {
+                  const isActive = img === activeImage
                   return (
                     <div className='relative w-full pt-[100%]' key={img}>
                       <img
-                        src={product.image}
-                        alt={product.name}
+                        src={img}
+                        alt={`${index}-${product.name}`}
                         className='absolute top-0 left-0 h-full w-full cursor-pointer bg-white object-cover'
+                        onClick={() => {
+                          handleHoverImage(img)
+                        }}
                       />
                       {isActive && (
-                        <div className='absolute inset-0 border-2 border-shopee_shopee_orange' />
+                        <div className='absolute inset-0 border-2 border-shopee_orange/90' />
                       )}
                     </div>
                   )
                 })}
-                <button className='absolute right-0 top-1/2 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'>
+                {/* Next Button */}
+                <button
+                  className={`absolute right-0 top-1/2 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 hover:bg-black/40
+                            text-white ${sliderIndices[1] === product.images.length && 'cursor-not-allowed'}`}
+                  onClick={nextRange}
+                >
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
@@ -205,8 +253,9 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
-      <div className='mt-8 bg-white p-4 shadow'>
-        <div className='container'>
+      {/* Product Description */}
+      <div className='container'>
+        <div className='mt-8 bg-white p-4 shadow'>
           <div className='rounded bg-gray-50 p-4 text-lg capitalize text-slate-700'>
             Mô tả sản phẩm
           </div>
