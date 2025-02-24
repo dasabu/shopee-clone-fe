@@ -33,7 +33,7 @@ export default function useRoutesElements() {
       )
     },
     {
-      path: '/:id',
+      path: '/:slug',
       index: true,
       element: (
         <MainLayout>

@@ -7,9 +7,12 @@ import ProductRating from '../ProductList/components/ProductRating'
 import { formatCurrency, formatToSocialStyle, rateSale } from '@/utils/product'
 import InputNumber from '@/components/InputNumber'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { getIdFromSlug } from '@/utils/slug'
 
 export default function ProductDetail() {
-  const { id } = useParams()
+  const { slug } = useParams()
+  const id = getIdFromSlug(slug as string)
+
   const { data: productDetailData } = useQuery({
     queryKey: ['product', id],
     queryFn: () => getProductDetailApi(id as string)
