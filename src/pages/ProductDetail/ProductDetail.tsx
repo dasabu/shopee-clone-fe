@@ -26,6 +26,7 @@ export default function ProductDetail() {
   })
   const product = productDetailData?.data.data
 
+
   /**
    * Similar products
    */
@@ -50,6 +51,7 @@ export default function ProductDetail() {
      */
     staleTime: 3 * 60 * 1000 // 3 mins
   })
+
 
   /**
    * Slider
