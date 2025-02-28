@@ -10,12 +10,12 @@ export const ORDER = {
   DESC: 'desc'
 } as const
 
-export const PURCHASE_STATUS = {
-  inCart: -1,
-  all: 0,
-  waitForConfirmation: 1,
-  waitForGetting: 2,
-  inProgress: 3,
-  delivered: 4,
-  cancelled: 5
+export const PURCHASES_STATUS = {
+  IN_CART: -1,
+  ALL: 0,
+  WAIT_FOR_CONFIRMATION: 1,
+  WAIT_FOR_GETTING: 2,
+  IN_PROGRESS: 3,
+  DELIVERED: 4,
+  CANCELLED: 5
 } as const

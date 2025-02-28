@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import DOMPurify from 'dompurify'
 
 import { getProductDetailApi, getProductsApi } from '@/apis/product.api'
@@ -9,19 +9,27 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { getIdFromSlug } from '@/utils/slug'
 import ProductCard from '../ProductList/components/ProductCard'
 import QuantityController from './components/QuantityController'
+import { addToCartApi } from '@/apis/purchase.api'
+import { PURCHASES_STATUS } from '@/utils/constants'
+import { toast } from 'react-toastify'
 
 export default function ProductDetail() {
   const { slug } = useParams()
   const id = getIdFromSlug(slug as string)
 
-  /* Product Detail */
+  /**
+   * Product Detail
+   */
   const { data: productDetailData } = useQuery({
     queryKey: ['product', id],
     queryFn: () => getProductDetailApi(id as string)
   })
   const product = productDetailData?.data.data
 
-  /* All products */
+
+  /**
+   * Similar products
+   */
   const queryParams = {
     limit: '6',
     page: '1',
@@ -44,7 +52,10 @@ export default function ProductDetail() {
     staleTime: 3 * 60 * 1000 // 3 mins
   })
 
-  /* Slider */
+
+  /**
+   * Slider
+   */
   const [sliderIndices, setSliderIndices] = useState<number[]>([0, 5])
   // avoid changing data when component is re-rendered
   const sliderImages = useMemo(
@@ -62,7 +73,9 @@ export default function ProductDetail() {
     }
   }
 
-  /* Active Image */
+  /**
+   * Active image
+   */
   const [activeImage, setActiveImage] = useState<string>('')
   useEffect(() => {
     if (product && product.images.length > 0) {
@@ -101,10 +114,35 @@ export default function ProductDetail() {
     activeImageRef.current?.removeAttribute('style')
   }
 
-  /* Quantity Controller */
+  /**
+   * Quantity Controller
+   */
   const [quantity, setQuantity] = useState<number>(1)
   const handleChangeQuantity = (value: number) => {
     setQuantity(value)
+  }
+
+  /**
+   * Add to cart
+   */
+  const queryClient = useQueryClient()
+  const addToCartMutation = useMutation({
+    mutationFn: addToCartApi, // (body) => addToCart(body)
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ['purchases', { status: PURCHASES_STATUS.IN_CART }]
+      })
+      toast.success(data.data.message || 'Thêm vào giỏ hàng thành công', {
+        autoClose: 1000
+      })
+    }
+  })
+
+  const handleAddToCart = () => {
+    addToCartMutation.mutate({
+      product_id: product!._id,
+      buy_count: quantity
+    })
   }
 
   if (!product) return null
@@ -239,7 +277,10 @@ export default function ProductDetail() {
                 </div>
               </div>
               <div className='mt-8 flex items-center'>
-                <button className='flex h-12 items-center justify-center rounded-sm border border-shopee_orange bg-shopee_orange/10 px-5 capitalize text-shopee_orange shadow-sm hover:bg-shopee_orange/5'>
+                <button
+                  onClick={handleAddToCart}
+                  className='flex h-12 items-center justify-center rounded-sm border border-shopee_orange bg-shopee_orange/10 px-5 capitalize text-shopee_orange shadow-sm hover:bg-shopee_orange/5'
+                >
                   <svg
                     enableBackground='new 0 0 15 15'
                     viewBox='0 0 15 15'

@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import Popover from '../Popover'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { logoutApi } from '@/apis/auth.api'
 import { useContext } from 'react'
 import { AppContext } from '@/contexts/app.context'
@@ -9,12 +9,16 @@ import { useQueryParamsProductList } from '@/hooks/useQueryParams'
 import { useForm } from 'react-hook-form'
 import { FormSchema, formSchema } from '@/utils/validation'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { handleSearchParams } from '@/utils/product'
+import { formatCurrency, handleSearchParams } from '@/utils/product'
 import { omit } from 'lodash'
+import { PURCHASES_STATUS } from '@/utils/constants'
+import { getPurchaseListApi } from '@/apis/purchase.api'
 
 type NameFormData = Pick<FormSchema, 'name'>
 
 const nameSchema = formSchema.pick(['name'])
+
+const MAX_PREVIEW_PURCHASES = 5
 
 export default function Header() {
   const navigate = useNavigate()
@@ -35,7 +39,9 @@ export default function Header() {
     logoutMutation.mutate()
   }
 
-  /* Search */
+  /**
+   * Search
+   */
   const queryParamsProductList = useQueryParamsProductList()
   const { register, handleSubmit } = useForm<NameFormData>({
     defaultValues: {
@@ -45,7 +51,6 @@ export default function Header() {
   })
 
   const handleSearch = handleSubmit((data) => {
-    console.log(data)
     const queryParams = queryParamsProductList.order
       ? omit({ ...queryParamsProductList, name: data.name }, [
           'order',
@@ -57,6 +62,18 @@ export default function Header() {
       search: handleSearchParams(queryParams)
     })
   })
+
+  /**
+   * Cart
+   * Note: khi chuyển trang thì Header chỉ bị re-render chứ không bị unmount - mount (do cùng MainLayout)
+   * nên query này sẽ không bị gọi lại -> không cần thiết phải set staletime: Infinity
+   *
+   */
+  const { data: purchasesInCartData } = useQuery({
+    queryKey: ['purchases', { status: PURCHASES_STATUS.IN_CART }],
+    queryFn: () => getPurchaseListApi({ status: PURCHASES_STATUS.IN_CART })
+  })
+  const purchasesInCart = purchasesInCartData?.data.data
 
   return (
     <div className='pb-5 pt-2 bg-[linear-gradient(-180deg,#f53d2d,#f63)] text-white'>
@@ -195,115 +212,49 @@ export default function Header() {
             <Popover
               popoverOptions={
                 <div className='bg-white relative shadow-md rounded-sm border border-gray-200 max-w-[400px] text-sm'>
-                  <div className='p-2'>
-                    <div className='text-gray-400 capitalize'>
-                      Sản phẩm mới thêm
-                    </div>
-                    <div className='mt-5'>
-                      <div className='mt-4 flex'>
-                        <div className='flex-shrink-0'>
-                          <img
-                            src='https://cf.shopee.vn/file/sg-11134201-22110-s3ycuwtvgvjvb4_tn'
-                            alt='anh'
-                            className='w-11 h-11 object-cover'
-                          />
-                        </div>
-                        <div className='flex-grow ml-2 overflow-hidden'>
-                          <div className='truncate'>
-                            [LIFEMCMBP2 -12% đơn 250K] Bộ Nồi Inox 3 Đáy
-                            SUNHOUSE SH334 16, 20, 24 cm
-                          </div>
-                        </div>
-                        <div className='ml-2 flex-shrink-0'>
-                          <span className='text-orange'>₫469.000</span>
-                        </div>
+                  {purchasesInCart ? (
+                    <div className='p-2'>
+                      <div className='text-gray-400 capitalize'>
+                        Sản phẩm mới thêm
                       </div>
-                      <div className='mt-4 flex'>
-                        <div className='flex-shrink-0'>
-                          <img
-                            src='https://cf.shopee.vn/file/sg-11134201-22110-s3ycuwtvgvjvb4_tn'
-                            alt='anh'
-                            className='w-11 h-11 object-cover'
-                          />
-                        </div>
-                        <div className='flex-grow ml-2 overflow-hidden'>
-                          <div className='truncate'>
-                            [LIFEMCMBP2 -12% đơn 250K] Bộ Nồi Inox 3 Đáy
-                            SUNHOUSE SH334 16, 20, 24 cm
-                          </div>
-                        </div>
-                        <div className='ml-2 flex-shrink-0'>
-                          <span className='text-orange'>₫469.000</span>
-                        </div>
-                      </div>
-                      <div className='mt-4 flex'>
-                        <div className='flex-shrink-0'>
-                          <img
-                            src='https://cf.shopee.vn/file/sg-11134201-22110-s3ycuwtvgvjvb4_tn'
-                            alt='anh'
-                            className='w-11 h-11 object-cover'
-                          />
-                        </div>
-                        <div className='flex-grow ml-2 overflow-hidden'>
-                          <div className='truncate'>
-                            [LIFEMCMBP2 -12% đơn 250K] Bộ Nồi Inox 3 Đáy
-                            SUNHOUSE SH334 16, 20, 24 cm
-                          </div>
-                        </div>
-                        <div className='ml-2 flex-shrink-0'>
-                          <span className='text-orange'>₫469.000</span>
-                        </div>
-                      </div>
-                      <div className='mt-4 flex'>
-                        <div className='flex-shrink-0'>
-                          <img
-                            src='https://cf.shopee.vn/file/sg-11134201-22110-s3ycuwtvgvjvb4_tn'
-                            alt='anh'
-                            className='w-11 h-11 object-cover'
-                          />
-                        </div>
-                        <div className='flex-grow ml-2 overflow-hidden'>
-                          <div className='truncate'>
-                            [LIFEMCMBP2 -12% đơn 250K] Bộ Nồi Inox 3 Đáy
-                            SUNHOUSE SH334 16, 20, 24 cm
-                          </div>
-                        </div>
-                        <div className='ml-2 flex-shrink-0'>
-                          <span className='text-orange'>₫469.000</span>
-                        </div>
-                      </div>
-                      <div className='mt-4 flex'>
-                        <div className='flex-shrink-0'>
-                          <img
-                            src='https://cf.shopee.vn/file/sg-11134201-22110-s3ycuwtvgvjvb4_tn'
-                            alt='anh'
-                            className='w-11 h-11 object-cover'
-                          />
-                        </div>
-                        <div className='flex-grow ml-2 overflow-hidden'>
-                          <div className='truncate'>
-                            [LIFEMCMBP2 -12% đơn 250K] Bộ Nồi Inox 3 Đáy
-                            SUNHOUSE SH334 16, 20, 24 cm
-                          </div>
-                        </div>
-                        <div className='ml-2 flex-shrink-0'>
-                          <span className='text-orange'>₫469.000</span>
-                        </div>
+                      <div className='mt-5'>
+                        {purchasesInCart
+                          .slice(0, MAX_PREVIEW_PURCHASES)
+                          .map((purchase) => (
+                            <div className='mt-2 py-2 flex hover:bg-gray-100'>
+                              <div className='flex-shrink-0'>
+                                <img
+                                  src={purchase.product.image}
+                                  alt={`${purchase.product.name}-image`}
+                                  className='w-11 h-11 object-cover'
+                                />
+                              </div>
+                              <div className='flex-grow ml-2 overflow-hidden'>
+                                <div className='truncate'>
+                                  {purchase.product.name}
+                                </div>
+                              </div>
+                              <div className='ml-2 flex-shrink-0'>
+                                <span className='text-orange'>
+                                  đ{formatCurrency(purchase.product.price)}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
                       </div>
                     </div>
-                    <div className='flex mt-6 items-center justify-between'>
-                      <div className='capitalize text-xs text-gray-500'>
-                        Thêm hàng vào giỏ
-                      </div>
-                      <button className='capitalize bg-shopee_orange hover:bg-opacity-90 px-4 py-2 rounded-sm text-white'>
-                        Xem giỏ hàng
-                      </button>
+                  ) : (
+                    <div className='flex items-center justify-between p-10'>
+                      <img
+                        src='src/assets/no-product-found.png'
+                        className='w-40 h-20'
+                      />
                     </div>
-                  </div>
+                  )}
                 </div>
               }
             >
-              <Link to='/'>
+              <Link to='/' className='relative'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   fill='none'
@@ -318,6 +269,9 @@ export default function Header() {
                     d='M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z'
                   />
                 </svg>
+                <span className='absolute top-[-5px] left-[17px] rounded-full px-[9px] py-[1px] bg-white text-shopee_orange text-xs'>
+                  {purchasesInCart?.length}
+                </span>
               </Link>
             </Popover>
           </div>
