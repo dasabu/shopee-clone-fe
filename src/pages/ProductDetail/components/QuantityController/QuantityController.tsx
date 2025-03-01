@@ -1,4 +1,5 @@
 import InputNumber, { InputNumberProps } from '@/components/InputNumber'
+import { useState } from 'react'
 
 interface QuantityControllerProps extends InputNumberProps {
   max?: number
@@ -17,6 +18,8 @@ export default function QuantityController({
   value,
   ...rest
 }: QuantityControllerProps) {
+  const [localValue, setLocalValue] = useState<number>(Number(value || 0))
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let _value = Number(event.target.value)
     // reset giá trị trong input về max khi nhập > max và < 1
@@ -27,26 +30,29 @@ export default function QuantityController({
     }
     if (onType) {
       onType(_value)
+      setLocalValue(_value)
     }
   }
 
   const handleIncrease = () => {
-    let _value = Number(value) + 1
+    let _value = Number(value || localValue) + 1
     if (max && _value > max) {
       _value = max
     }
     if (onIncrease) {
       onIncrease(_value)
+      setLocalValue(_value)
     }
   }
 
   const handleDecrease = () => {
-    let _value = Number(value) - 1
+    let _value = Number(value || localValue) - 1
     if (_value < 1) {
       _value = 1
     }
     if (onDecrease) {
       onDecrease(_value)
+      setLocalValue(_value)
     }
   }
 
@@ -78,7 +84,7 @@ export default function QuantityController({
           className=''
           classNameError='hidden'
           classNameInput='h-8 w-14 border-t border-b border-gray-300 p-1 text-center outline-none'
-          value={value}
+          value={value || localValue}
           onChange={handleChange}
           {...rest}
         />
