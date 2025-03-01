@@ -245,6 +245,22 @@ export default function Header() {
                             </div>
                           ))}
                       </div>
+                      <div className='mt-6 flex items-center justify-between'>
+                        <div className='text-xs capitalize text-gray-500'>
+                          Còn:{' '}
+                          <span className='font-medium'>
+                            {purchasesInCart.length > MAX_PREVIEW_PURCHASES &&
+                              purchasesInCart.length - MAX_PREVIEW_PURCHASES}
+                          </span>{' '}
+                          sản phẩm
+                        </div>
+                        <Link
+                          to='/cart'
+                          className='rounded-sm bg-shopee_orange px-4 py-2 capitalize text-white hover:bg-opacity/90'
+                        >
+                          Xem giỏ hàng
+                        </Link>
+                      </div>
                     </div>
                   ) : (
                     <div className='flex items-center justify-between p-10'>

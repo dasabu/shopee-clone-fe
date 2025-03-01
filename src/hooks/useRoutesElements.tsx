@@ -8,6 +8,7 @@ import Profile from '@/pages/Profile'
 import { AppContext } from '@/contexts/app.context'
 import { useContext } from 'react'
 import ProductDetail from '@/pages/ProductDetail'
+import Cart from '@/pages/Cart'
 
 /* đã login/register */
 function ProtectedRoute() {
@@ -50,6 +51,14 @@ export default function useRoutesElements() {
           element: (
             <MainLayout>
               <Profile />
+            </MainLayout>
+          )
+        },
+        {
+          path: '/cart',
+          element: (
+            <MainLayout>
+              <Cart />
             </MainLayout>
           )
         }

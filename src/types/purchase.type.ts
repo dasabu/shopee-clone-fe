@@ -15,3 +15,8 @@ export interface Purchase {
   createdAt: string
   updatedAt: string
 }
+
+export interface PurchaseRequest {
+  product_id: string
+  buy_count: number
+}
