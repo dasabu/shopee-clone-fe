@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import Popover from '../Popover'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { logoutApi } from '@/apis/auth.api'
 import { useContext } from 'react'
 import { AppContext } from '@/contexts/app.context'
@@ -22,6 +22,7 @@ const MAX_PREVIEW_PURCHASES = 5
 
 export default function Header() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const { isAuthenticated, setIsAuthenticated, profile, setProfile } =
     useContext(AppContext)
@@ -31,7 +32,9 @@ export default function Header() {
       setIsAuthenticated(false)
       setProfile(null)
       toast.success(data.data.message)
-      navigate('/login')
+      queryClient.removeQueries({
+        queryKey: ['purchases', { status: PURCHASES_STATUS.IN_CART }]
+      })
     }
   })
 
@@ -67,7 +70,6 @@ export default function Header() {
    * Cart
    * Note: khi chuyển trang thì Header chỉ bị re-render chứ không bị unmount - mount (do cùng MainLayout)
    * nên query này sẽ không bị gọi lại -> không cần thiết phải set staletime: Infinity
-   *
    */
   const { data: purchasesInCartData } = useQuery({
     queryKey: ['purchases', { status: PURCHASES_STATUS.IN_CART }],
